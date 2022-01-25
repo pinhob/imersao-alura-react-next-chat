@@ -1,4 +1,6 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import appConfig from '../config.json';
 
 function Title({ tag, children }) {
@@ -17,7 +19,8 @@ function Title({ tag, children }) {
 };
 
 export default function HomePage() {
-  const username = 'pinhob';
+  const [username, setUsername] = useState('pinhob');
+  const router = useRouter();
 
   return (
     <>
@@ -46,6 +49,10 @@ export default function HomePage() {
         >
           <Box
             as="form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              router.push('/chat');
+            }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -57,6 +64,9 @@ export default function HomePage() {
             </Text>
 
             <TextField
+              placeholder='Insira seu usuário do Github'
+              value={ username }
+              onChange= { ({ target: { value } }) => setUsername(value) }
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -99,7 +109,10 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={`https://github.com/${username}.png`}
+              src={ username.length > 2
+                ? `https://github.com/${username}.png`
+                : `https://github.com/github.png`
+              }
               styleSheet={{
                 borderRadiu: '50%',
                 marginBottom: '16px'
