@@ -64,12 +64,18 @@ export default function Chat () {
 
           <Box
             as="form"
+            onSubmit={(event) => {
+              event.preventDefault();
+
+              handleNewMessage(message);
+            }}
             styleSheet={{
               display: 'flex',
               alignItems: 'center',
             }}
           >
             <TextField
+              required
               value={ message }
               onChange={ ({ target: { value} }) => setMessage(value) }
               onKeyPress={(event) => {
@@ -90,6 +96,17 @@ export default function Chat () {
                 backgroundColor: appConfig.theme.colors.neutrals[800],
                 marginRight: '12px',
                 color: appConfig.theme.colors.neutrals[200],
+              }}
+            />
+
+            <Button
+              type='submit'
+              iconName='arrowRight'
+              buttonColors={{
+                contrastColor: appConfig.theme.colors.neutrals["000"],
+                mainColor: appConfig.theme.colors.primary[500],
+                mainColorLight: appConfig.theme.colors.primary[400],
+                mainColorStrong: appConfig.theme.colors.primary[600],
               }}
             />
           </Box>
