@@ -1,7 +1,28 @@
-import { Box, Text, Button, TextField } from '@skynexui/components';
+import { Box, Text, Button, TextField, Image } from '@skynexui/components';
+import { useState } from 'react/cjs/react.development';
 import appConfig from '../config.json';
 
 export default function Chat () {
+  const [message, setMessage] = useState('');
+  const [messageList, setMessageList] = useState([]);
+
+  const handleNewMessage = (message) => {
+    const newMessage = {
+      id: messageList.length + 1,
+      from: 'pinhob',
+      message,
+    }
+
+    console.log(newMessage);
+
+    setMessageList([
+      newMessage,
+      ...messageList,
+    ]);
+
+    setMessage('')
+  }
+
   return (
     <Box
       styleSheet={{
@@ -22,13 +43,13 @@ export default function Chat () {
           backgroundColor: appConfig.theme.colors.neutrals[700],
           height: '100%',
           maxWidth: '95%',
-          maxHeight: '96vh',
-          padding: '32px'
+          maxHeight: '95vh',
+          padding: '32px',
         }}
       >
         <Header />
         <Box
-          styleSheet={{ 
+          styleSheet={{
             position: 'relative',
             display: 'flex',
             flex: 1,
@@ -39,7 +60,7 @@ export default function Chat () {
             padding: '16px',
           }}
         >
-          <MessageList />
+          <Messages newMessages={ messageList } />
 
           <Box
             as="form"
@@ -49,9 +70,15 @@ export default function Chat () {
             }}
           >
             <TextField
-              // value=''
-              onChange={() => console.log('aplicar lógica')}
-              onKeyPress={() => console.log('aplicar lógica')}
+              value={ message }
+              onChange={ ({ target: { value} }) => setMessage(value) }
+              onKeyPress={(event) => {
+                if (event.key.includes('Enter')) {
+                  event.preventDefault();
+
+                  handleNewMessage(message);
+                }
+              }}
               placeholder='Insira sua mensagem aqui...'
               type='textarea'
               styleSheet={{
@@ -84,7 +111,7 @@ function Header() {
           justifyContent: 'space-between',
         }}
       >
-        <Text variant='heading3'>
+        <Text variant='heading5'>
           Chat
         </Text>
         <Button
@@ -98,7 +125,7 @@ function Header() {
   )
 }
 
-function MessageList({ messages }) {
+function Messages({ newMessages }) {
   return(
     <Box
       tag="ul"
@@ -111,7 +138,53 @@ function MessageList({ messages }) {
         marginBottom: '16px',
       }}
     >
-      {/* adicionar lógica e estrutura das mensagens */}
+      { newMessages.map(({ id, from, message }) => {
+        return(
+          <Text
+            key={ id }
+            tag='li'
+            styleSheet={{
+              borderRadius: '5px',
+              padding: '6px',
+              marginBottom: '12px',
+              hover: {
+                  backgroundColor: appConfig.theme.colors.neutrals[700],
+              }
+            }}
+          >
+            <Box
+              styleSheet={{
+                  marginBottom: '8px',
+              }}
+            >
+              <Image
+                src={ `https://github.com/${from}.png` }
+                styleSheet={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  display: 'inline-block',
+                  marginRight: '8px',
+                }}
+              />
+              <Text tag="strong">
+                { from }
+              </Text>
+              <Text
+                tag='span'
+                styleSheet={{
+                  fontSize: '10px',
+                  marginLeft: '8px',
+                  color: appConfig.theme.colors.neutrals[300],
+                }}
+              >
+                { new Date().toLocaleDateString() }
+              </Text>
+            </Box>
+            { message }
+          </Text>
+        );
+      }) }
     </Box>
   );
 }
